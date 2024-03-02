@@ -84,8 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisSpacing: 4.0,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      // print(data!['results'][index]['urls']);
-                      // final tag = data!['results'][index]['id'];
                       return InkWell(
                         onTap: () {
                           Navigator.push(
