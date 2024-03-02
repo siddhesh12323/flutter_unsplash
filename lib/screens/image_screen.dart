@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ImageScreen extends StatelessWidget {
-  final String imageUrl;
+  // final String imageUrl;
+  final dynamic data;
 
-  const ImageScreen({super.key, required this.imageUrl});
+  const ImageScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +14,11 @@ class ImageScreen extends StatelessWidget {
       ),
       body: Center(
         child: Image.network(
-          imageUrl,
+          data['urls']['full'],
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) {
-              return child;
+              return Hero(tag: data['id'], child: child);
             } else {
               return const Text(
                 'Loading high quality image...',

@@ -13,13 +13,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Future<Map<String, dynamic>?> fetchData(int page, String query) async {
-    final String apiUrl = 'https://api.unsplash.com/search/photos';
-    final String apiKey = Config.apiKey;
+    const String apiUrl = 'https://api.unsplash.com/search/photos';
+    // Provide your API key here
+    const String apiKey = Config.apiKey;
 
     final Map<String, dynamic> parameters = {
-      'query': '$query',
+      'query': query,
       // 'page': '',
-      'client_id': '$apiKey',
+      'client_id': apiKey,
       'per_page': '10',
       'orientation': 'portrait',
       'page': '$page',
@@ -30,16 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
         Uri.parse(apiUrl).replace(queryParameters: parameters),
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization':
-          //     'Bearer $apiKey', // Include your secret or access key
         },
       );
 
+      // Successful API call
       if (response.statusCode == 200) {
-        // Successful API call
         final Map<String, dynamic> data = json.decode(response.body);
-        // Process the data as needed
-        print(data);
         return data;
       } else {
         // Handle API error
@@ -53,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Map<String, dynamic>? images() {}
   Map<String, dynamic>? data;
   int? page;
   TextEditingController searchController = TextEditingController();
@@ -88,15 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisSpacing: 4.0,
                     ),
                     itemBuilder: (BuildContext context, int index) {
-                      // print(data!['results'][index]['urls']['small']);
+                      // print(data!['results'][index]['urls']);
+                      // final tag = data!['results'][index]['id'];
                       return InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => ImageScreen(
-                                imageUrl: data!['results'][index]['urls']
-                                    ['full'],
+                                data: data!['results'][index],
                               ),
                             ),
                           );
@@ -104,9 +100,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width / 2,
                           height: MediaQuery.of(context).size.width / 2,
-                          child: Image.network(
-                              data!['results'][index]['urls']['small'],
-                              fit: BoxFit.cover),
+                          child: Hero(
+                            tag: data!['results'][index]['id'],
+                            child: Image.network(
+                                data!['results'][index]['urls']['small'],
+                                fit: BoxFit.cover),
+                          ),
                         ),
                       );
                     }),
@@ -158,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     page = page! + 1;
                     data = data2;
+                    print(data);
                   });
                 },
                 child: const Text('Refresh Images'),
